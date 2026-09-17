@@ -2,5 +2,5 @@
 ---
 ### Aqui estarão todos meus estudos pessoais relacionados a **API**.
 
-> Marcações e comentários no próprio **server.js**.
+> Marcações e comentários relacionados ao estudo, no próprio **server.js**.
 ---
