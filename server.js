@@ -127,6 +127,29 @@ app.put("/alunos/:id", async (req, res) =>{
     }
 });
 
+app.delete("/alunos/:id", async(req, res) =>{
+    const id = Number(req.params.id)
+    
+    try {
+        const[resultado] = await conexao.query("DELETE FROM alunos WHERE ID = ?;", [id]);
+if(resultado.affectedRows === 0){
+    res.status(404).json({
+        mensagem: "Aluno não encontrado"
+    });
+}
+
+    res.status(200).json({
+        mensagem: "Aluno deletado com sucesso!"
+    });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            mensagem:"Erro ao deletar aluno"
+        });
+    }
+})
+
 const PORTA = 3000;
 
 app.listen(PORTA, () =>{

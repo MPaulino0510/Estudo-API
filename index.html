@@ -8,15 +8,16 @@
 </head>
 <body>
     <div class="cadastrar">
-        <h1>Cadastro</h1>
-        <input type="text" placeholder="Nome">
-        <p></p>
-        <input type="email" placeholder="Email">
-        <p></p>
-        <input type="date" placeholder="Data">
-        <p></p>
-        <input type="password" name="Senha" id="password" placeholder="Senha">
-        <p></p>
+        <h1>Cadastro de Aluno</h1>
+        <form id="formCadastro">
+            <input type="text" id="nome" placeholder="Nome" required>
+            <input type="text" id="curso" placeholder="Curso" required>
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p id="mensagem"></p>
     </div>
+
+    <!-- Conecta o JavaScript do Frontend -->
+    <script src="script.js"></script>
 </body>
 </html>
