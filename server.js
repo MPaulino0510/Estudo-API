@@ -132,6 +132,9 @@ app.delete("/alunos/:id", async(req, res) =>{
     
     try {
         const[resultado] = await conexao.query("DELETE FROM alunos WHERE ID = ?;", [id]);
+
+        // Diria que essa linha é auto explicativa, ela faz o comando de apagar do banco de dados as informações.
+
 if(resultado.affectedRows === 0){
     res.status(404).json({
         mensagem: "Aluno não encontrado"
@@ -150,9 +153,9 @@ if(resultado.affectedRows === 0){
     }
 })
 
-const PORTA = 3000;
+const PORTA = 3000; // Define exatamente aonde vai ficar hospedado nosso servidor.
 
-app.listen(PORTA, () =>{
+app.listen(PORTA, () =>{ //= Esse código basicamente liga o servidor.
 
     console.log("Servidor iniciado com sucesso!");
     console.log(`http://localhost:${PORTA}`);
