@@ -44,4 +44,93 @@ try {
 
 app.get("/alunos/:id", async (req, res) => {
     const id = Number(req.params.id)
-}) // Essa linha, diz algo muito simples. Se acessarmos o campo "/:id", uma constante é criada, que, pega o id que foi escrito no http, e transforma em um parâmetro tipo Number. Parâmetros, são todos os dados que são enviados para o sistema. Nós colocamos "Number" do lado, porque queremos transformar essa informação em uma variável tipo número. e o "req" junto com o "id", significam que nós queremos pegar os dados da requisição (usuário pediu), mas especificamente o id.
+
+    // Essa linha, diz algo muito simples. Se acessarmos o campo "/:id", uma constante é criada, que, pega o id que foi escrito no http, e transforma em um parâmetro tipo Number. Parâmetros, são todos os dados que são enviados para o sistema. Nós colocamos "Number" do lado, porque queremos transformar essa informação em uma variável tipo número. e o "req" junto com o "id", significam que nós queremos pegar os dados da requisição (usuário pediu), mas especificamente o id.
+
+try {
+    const[resultado] = await conexao.query("SELECT * FROM alunos WHERE id = ?;", [id]);
+
+    // Essa linha diz basicamente que é pra tentar pegar o id de alunos, cujo id é "?", esse "?"" significa que é um espaço vazio por enquanto, nós o preenchemos esse espaço digitando [id] logo após, ou seja, é pra pegar o id que o usuário digitou anteriormente.
+
+    if (resultado.length === 0){
+        return res.status(404).json({
+            mensagem: "Aluno não encontrado!"
+        })
+    }
+
+    // Esse "if", serve para casos de erros de digitação: se o usuário digitar algum id errado, então, returna erro 404 (que significa exatamente não encontrado) e mais a mensagem no json.
+
+    res.status(200).json(resultado[0]) // Volta a informação se achada.
+
+} catch (error) {
+    console.log(error);
+    res.status(500).json({
+        mensagem: "Erro ao achar aluno"
+    }) // Já explicamos essa linha anteriormente.
+}
+})
+
+app.post("/alunos/cadastrar", async(req, res) => {
+    const {nome, curso} = req.body;
+
+    if(!nome || !curso){
+        return res.status(400).json({
+            mensagem: "Nome e curso precisam ser preenchidos."
+        })
+    }
+    try {
+        const[resultado] = await conexao.query("INSERT INTO alunos (nome, curso) VALUES (?, ?);", [nome, curso]);
+        res.status(201).json({
+            mensagem: "Aluno cadastrado com sucesso!",
+            id: resultado.insertId
+
+            // A mensagem 201 significa que uma nova informação foi criada, o "INSERT INTO" tenta colocar o nome e curso criados no body (lá no ThunderClient) dentro do banco de dados. O insertId serve para colocar um Id imediatamente no usuário que foi criado, automaticamente, como se fosse o auto increment lá do banco de dados.
+
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            mensagem: "Erro ao cadastrar aluno!"
+        });
+    }
+});
+
+app.put("/alunos/:id", async (req, res) =>{
+    const id = Number(req.params.id);
+    const {nome, curso} = req.body;
+
+    if(!nome || !curso){
+        return res.status(400).json({
+            mensagem: "Nome e curso obrigatórios!"
+        })
+    }
+    try {
+        const[resultado] = await conexao.query("UPDATE alunos SET nome = ?, curso = ? WHERE id = ?;", [nome, curso, id]);
+
+        if(resultado.affectedRows === 0){
+            return res.status(404).json({
+                mensagem: "Id de aluno não encontrado"
+
+                // O affectedRows, pergunta pro banco de dados, se o Id que o usuário está querendo modificar existe na tabela. Se caso existir, o affectedRows será maior que 0, ou seja, o if não acontecerá. Agora, caso o Id não exista na tabela, então, o affectedRows será igual a 0, assim aparecendo a mensagem acima.
+
+            });
+        }
+
+        res.status(200).json({
+            mensagem: "Aluno atualizado com sucesso!"
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+        mensagem: "Erro ao atualizar aluno!"
+        });
+    }
+});
+
+const PORTA = 3000;
+
+app.listen(PORTA, () =>{
+
+    console.log("Servidor iniciado com sucesso!");
+    console.log(`http://localhost:${PORTA}`);
+});
